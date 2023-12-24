@@ -27,10 +27,10 @@ public class Main {
                 String stateName = scanner.next();
                 states.put(stateName, new State(stateName));
             	System.out.print(stateName + " ");
-
             }
+            
         	System.out.println();
-            State startState = new State(scanner.next());
+            State startState = new State(scanner.next());	
         	System.out.println("start State: " + startState.getName());
 
             acceptState = new State(scanner.next());
