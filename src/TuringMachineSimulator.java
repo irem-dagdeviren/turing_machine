@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.Map;
 
 public class TuringMachineSimulator {
@@ -8,9 +7,9 @@ public class TuringMachineSimulator {
 	    private StringBuilder tape;
 	    private int headPosition;
 	    Main input = new Main();
-	    State accept = input.acceptState;
-	    State reject = input.rejectState;
-	    char blank = input.blankSymbol;
+	    State accept = Main.acceptState;
+	    State reject = Main.rejectState;
+	    char blank = Main.blankSymbol;
 	    public TuringMachineSimulator() {
 	    }
 	    public TuringMachineSimulator( String input, Map<String, State> states, State startState) {
