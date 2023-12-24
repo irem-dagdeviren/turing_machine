@@ -1,44 +1,101 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 public class Main {
-	    public static void main(String[] args) {
-	        // Define states and transitions
+	
+	static State acceptState;
+    static State rejectState;
+    static char blankSymbol;
+	    public static void main(String[] args) throws FileNotFoundException {
 	        Map<String, State> states = new HashMap<>();
-	        State qA = new State("qA");
-	        State qR = new State("qR");
+	        
+	        Scanner scanner = new Scanner(new File("src\\\\input.txt"));
+	        int inputAlphabetSize = scanner.nextInt();
+        	System.out.println("# variables in input alphabet: " + inputAlphabetSize);
 
-	        State q1 = new State("q1");
-	        State q2 = new State("q2");
-	        State q3 = new State("q3");
-	        State q4 = new State("q4");
-	        State q5 = new State("q5");
-	        states.put("q1", q1);
-	        states.put("q2", q2);
-	        states.put("q3", q3);
-	        states.put("q4", q4);
-	        states.put("q5", q5);
+            int tapeAlphabetSize = scanner.nextInt();
+        	System.out.println("# variables in tape alphabet: " + tapeAlphabetSize);
 
-	        q1.addTransition('0', new Transition(q2, 'X', Direction.RIGHT));
-	        q1.addTransition('b', new Transition(qR, 'X', Direction.RIGHT));
-	        q1.addTransition('X', new Transition(qR, 'X', Direction.RIGHT));
-	        q2.addTransition('0', new Transition(q3, 'X', Direction.RIGHT));
-	        q2.addTransition('X', new Transition(q2, 'X', Direction.RIGHT));
-	        q2.addTransition('b', new Transition(qA, 'b', Direction.RIGHT));
-	        q3.addTransition('X', new Transition(q3, 'X', Direction.RIGHT));
-	        q3.addTransition('0', new Transition(q4, '0', Direction.RIGHT));
-	        q3.addTransition('b', new Transition(q5, 'b', Direction.LEFT));
-	        q4.addTransition('X', new Transition(q4, 'X', Direction.RIGHT));
-	        q4.addTransition('0', new Transition(q3, 'X', Direction.RIGHT));
-	        q4.addTransition('b', new Transition(qR, 'b', Direction.RIGHT));
-	        q5.addTransition('0', new Transition(q5, '0', Direction.LEFT));
-	        q5.addTransition('X', new Transition(q5, 'X', Direction.LEFT));
-	        q5.addTransition('b', new Transition(q2, 'b', Direction.RIGHT));
+            int numberOfStates = scanner.nextInt();
+        	System.out.println("# states: " + numberOfStates);
 
-	        TuringMachineSimulator tm1 = new TuringMachineSimulator("00", states, q1);
-	        tm1.run(); // Output: q1 q2 q3 q5 q5 q2 q2 qA (route taken), Accepted
+            System.out.print("States: ");
+            for (int i = 0; i < numberOfStates; i++) {
+                String stateName = scanner.next();
+                states.put(stateName, new State(stateName));
+            	System.out.print(stateName + " ");
 
-	        TuringMachineSimulator tm2 = new TuringMachineSimulator("000", states, q1);
-	        tm2.run(); // Output: q1 q2 q3 q4 qR (route taken), Rejected
+            }
+        	System.out.println();
+            State startState = new State(scanner.next());
+        	System.out.println("start State: " + startState.getName());
+
+            acceptState = new State(scanner.next());
+        	System.out.println("Accept State: " + acceptState.getName());
+
+            rejectState = new State(scanner.next());
+        	System.out.println("Reject State: " + rejectState.getName());
+
+            blankSymbol = scanner.next().charAt(0);
+            System.out.println("Blank Symbol: " + blankSymbol); 
+
+            System.out.print("Tape Alphabet: ");
+
+            String[] tapeAlphabet = new String[tapeAlphabetSize+1];
+            for (int i = 0; i < tapeAlphabetSize+1; i++) {
+                tapeAlphabet[i] = scanner.next();
+            	System.out.print(tapeAlphabet[i] + " ");
+
+            }
+        	System.out.println();
+            System.out.print("Input Alphabet: ");
+            String[] inputAlphabet = new String[inputAlphabetSize];
+            for (int i = 0; i < inputAlphabetSize; i++) {
+            	inputAlphabet[i] = scanner.next();
+            	System.out.print(inputAlphabet[i]);
+            }
+        	System.out.println();
+
+            ArrayList<String> stringsToDetect = new ArrayList<>();
+            
+            scanner.nextLine();
+            String line = "";
+            while (scanner.hasNextLine())
+            {
+            	line = scanner.nextLine();    
+            	String[] parsedLine = line.split(" ");
+                if (parsedLine.length == 5){    
+                	System.out.println(line);
+	                String fromState = parsedLine[0];
+	                char readSymbol = parsedLine[1].charAt(0);
+	                char writeSymbol = parsedLine[2].charAt(0);
+	                Direction direction = Direction.fromString(parsedLine[3]);
+	                State toState = states.get(parsedLine[4]);
+	
+	                State state = states.get(fromState);
+	                if (state != null) {
+	                    state.addTransition(readSymbol, new Transition(toState, writeSymbol, direction));
+	                }
+                }
+                else {
+                	stringsToDetect.add(line);
+                }
+            }
+           
+           for ( String input: stringsToDetect) {
+           	System.out.println("Strings To Detect: " + input);
+   	        TuringMachineSimulator tm1 = new TuringMachineSimulator(input, states, startState);
+   	        tm1.run();
+           	System.out.println();
+
+
+           }
+            
+
+
+	       
 	    }
 	}

@@ -7,7 +7,10 @@ public class TuringMachineSimulator {
 	    private String currentState;
 	    private StringBuilder tape;
 	    private int headPosition;
-
+	    Main input = new Main();
+	    State accept = input.acceptState;
+	    State reject = input.rejectState;
+	    char blank = input.blankSymbol;
 	    public TuringMachineSimulator() {
 	    }
 	    public TuringMachineSimulator( String input, Map<String, State> states, State startState) {
@@ -19,7 +22,7 @@ public class TuringMachineSimulator {
 
 	    public void run() {
 	        System.out.print(currentState + " ");
-	        while (!currentState.equals("qA") && !currentState.equals("qR")) {
+	        while (!currentState.equals(accept.getName()) && !currentState.equals(reject.getName())) {
 	            char currentSymbol = getCurrentSymbol();
 	            State currentStateObj = states.get(currentState);
 
@@ -35,12 +38,12 @@ public class TuringMachineSimulator {
 	            System.out.print(currentState + " ");
 	        }
 
-	        System.out.println("\nResult: " + (currentState.equals("qA") ? "Accepted" : "Rejected"));
+	        System.out.println("\nResult: " + (currentState.equals(accept.getName()) ? "Accepted" : "Rejected"));
 	    }
 
 	    private char getCurrentSymbol() {
 	        if (headPosition < 0 || headPosition >= tape.length()) {
-	            return 'b'; // Assume blank symbol for out-of-bounds positions
+	            return blank; 
 	        }
 	        return tape.charAt(headPosition);
 	    }
@@ -49,7 +52,7 @@ public class TuringMachineSimulator {
 	        switch (direction) {
 	            case LEFT:
 	                if (headPosition == 0) {
-	                    tape.insert(0, 'b'); // Insert blank symbol at the beginning if moving left from the leftmost position
+	                    tape.insert(0, blank); 
 	                } else {
 	                    headPosition--;
 	                }
@@ -57,8 +60,7 @@ public class TuringMachineSimulator {
 	            case RIGHT:
 	                headPosition++;
 	                if (headPosition == tape.length()) {
-	                    tape.append('b'); // Assume blank symbol for extending the tape to the right
-	                }
+	                    tape.append(blank); 	                }
 	                break;
 	        }
 	    }
